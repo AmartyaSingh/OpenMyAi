@@ -19,10 +19,10 @@ class OpenAISuite:
         if chatgpt_obj.check_speech_argument():
             chatgpt_obj.chat_run(speak_mode=True)
         #--dalle enabled. Use --dalle to enable dalle image generation
-        if dalle_obj.check_dalle_argument():
+        elif dalle_obj.check_dalle_argument():
             dalle_obj.dalle_generate_image()
         #normal mode text run
-        if not chatgpt_obj.check_speech_argument():
+        elif not chatgpt_obj.check_speech_argument():
             chatgpt_obj.chat_run()
 
 if __name__ == "__main__":

@@ -42,18 +42,22 @@ class DALLE_Suite(OpenAISuite):
                 self.download_url = json_data['data'][0]['url']
                 # Create a clickable link using the OSC 8 escape sequence
                 print(f'\033]8;;{self.download_url}\aClick here\033]8;;\a')
-                self.dalle_download_image
+                self.dalle_download_image()
             except Exception as ComputeError:
                 print(f"---ComputeError: {ComputeError}")
 
     def dalle_download_image(self):
         try:
+            print("+++Downloading image...")
             response = requests.get(self.download_url)
             if response.status_code != 200:
                 raise ValueError("Failed to download image")
             else:
+                print("---Image downloaded successfully.")
+                print("+++Saving image...")
                 image = Image.open(BytesIO(response.content))
                 image.save(f'{self.user_image_prompt}.png')
+                print("---Image saved successfully.")
         except ValueError as DownloadError:
             print(f"---DownloadError: {DownloadError}")
         except Exception as e:
