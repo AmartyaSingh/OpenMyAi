@@ -6,6 +6,9 @@ from playsound import playsound
 from main import OpenAISuite
 
 class ChatGPT_Suite(OpenAISuite):
+    def __init__(self) -> None:
+        self.cgpt_model_engine = "text-davinci-003"
+
     def chat_run(self, speak_mode=False):
             while True:
                 human_input = input("Me: ")

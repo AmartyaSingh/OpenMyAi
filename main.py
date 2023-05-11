@@ -5,9 +5,7 @@ from dotenv import load_dotenv
 
 class OpenAISuite:
     def __init__(self) -> None:
-        load_dotenv()
-        self.dalle_model_engine = "davinci"
-        self.cgpt_model_engine = "text-davinci-003"
+        load_dotenv()        
         openai.api_key = os.getenv("OPENAI_API_KEY")
 
     def main(self):
