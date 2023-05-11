@@ -2,6 +2,7 @@ import openai
 import requests
 import sys
 import json
+import os
 from requests.structures import CaseInsensitiveDict
 from main import OpenAISuite
 from PIL import Image
@@ -9,10 +10,11 @@ from io import BytesIO
 
 class DALLE_Suite(OpenAISuite):
     def __init__(self) -> None:
-        self.dalle_image_size = "256x256"
+        self.dalle_image_size = "256x256" #default
         self.download_url = ""
         self.dalle_model_engine = "davinci"
         self.user_image_prompt = ""
+        self.dalle_image_folder_name = f"/Users/{os.getlogin()}/Pictures/Dalle_Images/"
 
     def check_dalle_argument(self):
         script_args = sys.argv
@@ -77,9 +79,7 @@ class DALLE_Suite(OpenAISuite):
             else:
                 print("---Image downloaded successfully.")
                 print("+++Saving image...")
-                self.dalle_image_filename_formatting() #formatting filename to be shorter
-                image = Image.open(BytesIO(response.content))
-                image.save(f'{self.user_image_prompt}.png')
+                self.dalle_save_image_to_folder(response)
                 print("---Image saved successfully.")
         except ValueError as DownloadError:
             print(f"---DownloadError: {DownloadError}")
@@ -92,3 +92,29 @@ class DALLE_Suite(OpenAISuite):
         elif len(self.user_image_prompt) > 15:
             self.user_image_prompt = self.user_image_prompt.replace(" ", "_")
             self.user_image_prompt = self.user_image_prompt[:15]
+
+    def dalle_save_image_to_folder(self, response):
+        try:
+            #saving to custom folder i.e. /Users/username/Pictures/Dalle_Images/
+            self.create_folder(self.dalle_image_folder_name)
+            self.dalle_image_filename_formatting() #formatting filename to be shorter
+            image = Image.open(BytesIO(response.content))
+            image.save(f'{self.dalle_image_folder_name}/{self.user_image_prompt}.png')
+        except Exception as e:
+            #saving to current directory if folder creation fails
+            print("---Folder creation failed, saving to current directory instead.")
+            image = Image.open(BytesIO(response.content))
+            image.save(f'{self.user_image_prompt}.png')
+            print(f"---FolderCreationError: {e}")
+
+    def create_folder(self, folder_path):
+        try:
+            print("+++Checking if folder exists...")
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+                print(f"---Folder '{folder_path}' created successfully.")
+            else:
+                print(f"---Folder '{folder_path}' already exists.")
+        except OSError as e:
+
+            print(f"---OSErrorException: {e}")
