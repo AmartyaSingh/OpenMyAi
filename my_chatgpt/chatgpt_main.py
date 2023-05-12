@@ -4,31 +4,35 @@ import sys
 from gtts import gTTS
 from playsound import playsound
 from main import OpenAISuite
+from colorama import init, Fore, Style
+
 
 class ChatGPT_Suite(OpenAISuite):
     def __init__(self) -> None:
         self.cgpt_model_engine = "text-davinci-003"
+        #--init colorama
+        init()
 
     def chat_run(self, speak_mode=False):
             while True:
-                human_input = input("Me: ")
+                human_input = input(Fore.BLUE + "Me: " + Fore.YELLOW)
                 if human_input == '':
                     break
                 try:
                     text_response = self.get_text_response(human_input + ' AI: ')
                     if text_response:
                         formatted_text = self.parse_response(text_response)
-                        print("AI: " + str(formatted_text))
+                        print(Fore.GREEN + "AI: " + Fore.LIGHTMAGENTA_EX + str(formatted_text))
                         if speak_mode:
                             self.text_to_speech_gtts(formatted_text)
                     else:
                         raise AssertionError("No response from AI")
                 except AssertionError as error:
-                    print(f"---Error: {error}")
+                    print(Fore.RED + f"---Error: {error}")
                 except openai.error.RateLimitError as rl_error:
-                    print(f"---RateLimitError: {rl_error}")
+                    print(Fore.RED + f"---RateLimitError: {rl_error}")
                 except Exception as error:
-                    print(f"---Error: {error}")
+                    print(Fore.RED + f"---Error: {error}")
 
     def check_speech_argument(self):
         script_args = sys.argv
@@ -69,7 +73,5 @@ class ChatGPT_Suite(OpenAISuite):
             max_tokens=100)
         return response.choices[0].text.strip()
     
-
-#ChatGPT_Suite = ChatGPT_Suite()
 
     
