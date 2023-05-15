@@ -4,7 +4,7 @@ import sys
 from gtts import gTTS
 from playsound import playsound
 from main import OpenAISuite
-from colorama import init, Fore, Style
+from colorama import init, Fore
 
 
 class ChatGPT_Suite(OpenAISuite):
@@ -16,42 +16,37 @@ class ChatGPT_Suite(OpenAISuite):
         self.transcript = []
 
     def chat_run(self, speak_mode=False, transcript_mode=False):
-            while True:
-                human_input = input(Fore.BLUE + "Me: " + Fore.YELLOW)
-                self.transcript.append('Human: ' + human_input)
-                if human_input == '':
-                    break
-                try:
-                    text_response = self.get_text_response(human_input + ' AI: ')
-                    if text_response:
-                        formatted_text = self.parse_response(text_response)
-                        print(Fore.GREEN + "AI: " + Fore.LIGHTMAGENTA_EX + str(formatted_text))
-                        self.transcript.append('AI: ' + formatted_text) 
-                        if speak_mode:
-                            self.text_to_speech_gtts(formatted_text)
-                    else:
-                        raise AssertionError("No response from AI")
-                except AssertionError as error:
-                    print(Fore.RED + f"---Error: {error}")
-                except openai.error.RateLimitError as rl_error:
-                    print(Fore.RED + f"---RateLimitError: {rl_error}")
-                except Exception as error:
-                    print(Fore.RED + f"---Error: {error}")
-            if transcript_mode:
-                self.create_transcript_file()
+        while True:
+            human_input = input(Fore.BLUE + "Me: " + Fore.YELLOW)
+            self.transcript.append('Human: ' + human_input)
+            if human_input == '':
+                break
+            try:
+                text_response = self.get_text_response(human_input + ' AI: ')
+                if text_response:
+                    formatted_text = self.parse_response(text_response)
+                    print(Fore.GREEN + "AI: " + Fore.LIGHTMAGENTA_EX + str(formatted_text))
+                    self.transcript.append('AI: ' + formatted_text) 
+                    if speak_mode:
+                        self.text_to_speech_gtts(formatted_text)
+                else:
+                    raise AssertionError("No response from AI")
+            except AssertionError as error:
+                print(Fore.RED + f"---Error: {error}")
+            except openai.error.RateLimitError as rl_error:
+                print(Fore.RED + f"---RateLimitError: {rl_error}")
+            except Exception as error:
+                print(Fore.RED + f"---Error: {error}")
+        if transcript_mode:
+            self.create_transcript_file()
 
     def check_speech_argument(self):
-        script_args = sys.argv
-        if '--speak' in script_args or '--s' in script_args:
-            return True
-        return False
+        return '--speak' in sys.argv or '--s' in sys.argv
     
     def check_transcript_argument(self):
-        script_args = sys.argv
-        if '--transcript' in script_args or '--t' in script_args:
-            return True
-        return False
-    
+        return '--transcript' in sys.argv or '--t' in sys.argv
+
+    ##test using pyttx3 module for in-memory usage instead of hard file creation.
     def text_to_speech_gtts(self, text):
         # convert text to speech
         tts = gTTS(text=text, lang='en-gb')
@@ -71,16 +66,15 @@ class ChatGPT_Suite(OpenAISuite):
             model=self.cgpt_model_engine,
             prompt=prompt,
             temperature=0.0,
-            max_tokens=100)
+            max_tokens=100, 
+            n=1)
         return response.choices[0].text.strip()
     
     def create_transcript_file(self):
         self.remove_last_human_blank_input()
         with open("transcript.txt", "w") as transcript_file:
-            for line in self.transcript:
-                transcript_file.write(line + "\n")
+            transcript_file.writelines(line + "\n" for line in self.transcript)
     
     def remove_last_human_blank_input(self):
-        if len(self.transcript) > 0:
-            self.transcript.pop()
-        return
+        if self.transcript:
+            del self.transcript[-1]
