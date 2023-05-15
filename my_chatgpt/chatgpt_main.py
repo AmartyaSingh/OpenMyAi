@@ -25,8 +25,8 @@ class ChatGPT_Suite(OpenAISuite):
                 text_response = self.get_text_response(human_input + ' AI: ')
                 if text_response:
                     formatted_text = self.parse_response(text_response)
-                    print(Fore.GREEN + "AI: " + Fore.LIGHTMAGENTA_EX + str(formatted_text))
-                    self.transcript.append('AI: ' + formatted_text) 
+                    print(Fore.GREEN + "AI: " + Fore.LIGHTMAGENTA_EX + formatted_text)
+                    self.transcript.append('AI: ' + formatted_text)
                     if speak_mode:
                         self.text_to_speech_gtts(formatted_text)
                 else:
@@ -56,10 +56,12 @@ class ChatGPT_Suite(OpenAISuite):
 
     def parse_response(self, text):
         last_period_index = text.rfind('.')
-        if last_period_index >= 0:
-            last_sentence = text[:last_period_index+1]
+        text = text.replace("\n", "")
+        if last_period_index != -1:
+            all_but_last_sentence = text[:last_period_index+1]
             new_text = text[:last_period_index]  # remove the last sentence from the text
-            return last_sentence
+            return all_but_last_sentence
+        return text
         
     def get_text_response(self, prompt):
         response = openai.Completion.create(
@@ -68,7 +70,8 @@ class ChatGPT_Suite(OpenAISuite):
             temperature=0.0,
             max_tokens=100, 
             n=1)
-        return response.choices[0].text.strip()
+        text_response = response.choices[0].text
+        return text_response
     
     def create_transcript_file(self):
         self.remove_last_human_blank_input()
