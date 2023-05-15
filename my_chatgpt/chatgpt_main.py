@@ -75,8 +75,12 @@ class ChatGPT_Suite(OpenAISuite):
         return response.choices[0].text.strip()
     
     def create_transcript_file(self):
+        self.remove_last_human_blank_input()
         with open("transcript.txt", "w") as transcript_file:
             for line in self.transcript:
                 transcript_file.write(line + "\n")
     
-    
+    def remove_last_human_blank_input(self):
+        if len(self.transcript) > 0:
+            self.transcript.pop()
+        return

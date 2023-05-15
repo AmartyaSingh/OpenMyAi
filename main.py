@@ -13,20 +13,20 @@ class OpenAISuite:
         from my_chatgpt.chatgpt_main import ChatGPT_Suite
         chatgpt_obj = ChatGPT_Suite()
         dalle_obj = DALLE_Suite()
-        #--speak and transcript enabled. Use --speak/--s, --transcript/--t to enable text to speech and transcript
+        # Check for speech and transcript enabled
         if chatgpt_obj.check_speech_argument() and chatgpt_obj.check_transcript_argument():
             chatgpt_obj.chat_run(speak_mode=True, transcript_mode=True)
-        #--speak or --transcript enabled.
-        elif chatgpt_obj.check_speech_argument() or chatgpt_obj.check_transcript_argument():
-            if chatgpt_obj.check_speech_argument():
-                chatgpt_obj.chat_run(speak_mode=True)
-            elif chatgpt_obj.check_transcript_argument():
-                chatgpt_obj.chat_run(transcript_mode=True) 
-        #--dalle enabled. Use --dalle to enable dalle image generation
+        # Check for speech enabled
+        elif chatgpt_obj.check_speech_argument():
+            chatgpt_obj.chat_run(speak_mode=True)
+        # Check for transcript enabled
+        elif chatgpt_obj.check_transcript_argument():
+            chatgpt_obj.chat_run(transcript_mode=True) 
+        # Check for DALLE enabled
         elif dalle_obj.check_dalle_argument():
             dalle_obj.dalle_generate_image()
-        #normal mode text run
-        elif not chatgpt_obj.check_speech_argument():
+        # Normal text mode run
+        else:
             chatgpt_obj.chat_run()
 
 if __name__ == "__main__":
