@@ -1,6 +1,8 @@
 import os
 import openai
 import sys
+import time
+import pathlib
 from gtts import gTTS
 from playsound import playsound
 from main import OpenAISuite
@@ -14,8 +16,10 @@ class ChatGPT_Suite(OpenAISuite):
         init()
         #--init transcript
         self.transcript = []
+        self.transcript_folder_path = f"{os.path.expanduser('~')}/Documents/ChatGPT_Transcripts/" # platform independent folder structure
 
-    def chat_run(self, speak_mode=False, transcript_mode=False):
+
+    def chat_run(self, speak_mode=False, transcript_mode=False, transcript_repitition=False):
         while True:
             human_input = input(Fore.BLUE + "Me: " + Fore.YELLOW)
             self.transcript.append('Human: ' + human_input)
@@ -75,9 +79,20 @@ class ChatGPT_Suite(OpenAISuite):
     
     def create_transcript_file(self):
         self.remove_last_human_blank_input()
-        with open("transcript.txt", "w") as transcript_file:
-            transcript_file.writelines(line + "\n" for line in self.transcript)
-    
+        try:
+            folder_path = pathlib.Path(self.transcript_folder_path)
+            folder_path.mkdir(parents=True, exist_ok=True)
+            # Saving to custom folder, example /Users/username/Documents/ChatGpt_Transcripts/
+            print(Fore.YELLOW + "+++Saving Transcript to -> " +  Fore.MAGENTA + f"{self.transcript_folder_path}")
+            with open(f"{folder_path}/transcript_{str(int(time.time()))}.txt", "w") as transcript_file:
+                transcript_file.writelines(line + "\n" for line in self.transcript)
+            print(Fore.GREEN + "---Transcript saved successfully.")
+        except Exception as e:
+            print(Fore.RED + "---Folder creation failed, saving to current directory instead.")
+            with open(f"transcript_{str(int(time.time()))}.txt", "w") as transcript_file:
+                transcript_file.writelines(line + "\n" for line in self.transcript)
+            print(Fore.RED + f"---FolderCreationError: {e}")
+
     def remove_last_human_blank_input(self):
         if self.transcript:
             del self.transcript[-1]

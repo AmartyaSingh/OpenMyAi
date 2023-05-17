@@ -23,7 +23,7 @@ class DALLE_Suite(OpenAISuite):
         init()
     
     def check_dalle_argument(self):
-        return '--dalle' in sys.argv or '-d' in sys.argv
+        return '--dalle' in sys.argv or '--d' in sys.argv
     
     def dalle_image_size_checker(self):
         if self.dalle_image_size == '' or '256' in self.dalle_image_size:
