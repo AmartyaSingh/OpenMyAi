@@ -19,7 +19,7 @@ class ChatGPT_Suite(OpenAISuite):
         self.transcript_folder_path = f"{os.path.expanduser('~')}/Documents/ChatGPT_Transcripts/" # platform independent folder structure
 
 
-    def chat_run(self, speak_mode=False, transcript_mode=False, transcript_repitition=False):
+    def chat_run(self, speak_mode=False, transcript_mode=False):
         while True:
             human_input = input(Fore.BLUE + "Me: " + Fore.YELLOW)
             self.transcript.append('Human: ' + human_input)
