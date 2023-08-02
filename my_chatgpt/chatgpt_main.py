@@ -11,13 +11,16 @@ from colorama import init, Fore
 
 class ChatGPT_Suite(OpenAISuite):
     def __init__(self) -> None:
-        self.cgpt_model_engine = "text-davinci-003"
+        self.cgpt_model_engine = "gpt-4"
+        self.messages = [
+            {"role": "system", "content": "Hi"},
+            {"role": "user", "content": "Hello, how are you?"},
+        ]
         #--init colorama
         init()
         #--init transcript
         self.transcript = []
         self.transcript_folder_path = f"{os.path.expanduser('~')}/Documents/ChatGPT_Transcripts/" # platform independent folder structure
-
 
     def chat_run(self, speak_mode=False, transcript_mode=False):
         while True:
@@ -68,13 +71,16 @@ class ChatGPT_Suite(OpenAISuite):
         return text
         
     def get_text_response(self, prompt):
-        response = openai.Completion.create(
-            model=self.cgpt_model_engine,
-            prompt=prompt,
-            temperature=0.0,
-            max_tokens=100, 
-            n=1)
-        text_response = response.choices[0].text
+        self.messages.append(
+            {"role": "user", "content": prompt}
+        )
+        response = openai.ChatCompletion.create(
+                        model=self.cgpt_model_engine,
+                        messages=self.messages,
+                        temperature=0.4,
+                        max_tokens=100)
+        text_response = response['choices'][0]['message']['content']
+        self.messages.append({"role": "assistant", "content": text_response})
         return text_response
     
     def create_transcript_file(self):

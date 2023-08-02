@@ -21,14 +21,12 @@
 
 ## Running Code:
 ###  1. DALLE Mode, 
-        a. '--dalle' or '--d' arg needed.
+        a. Using the dalle shell script.
 ```bash             
-                python3.10 main.py --dalle
+                ./run_dalle.sh
 ```         
-            or
-```bash             
-                python3.10 main.py --d
-```
+        (If encountering permission denied error, use `chmod +x ./run_dalle.sh` in current directory)
+
         b. When running in Dalle mode, 
             - Specify image size i.e. 256, 512 or 1024 in the prompt.
             - Specify image prompt.
@@ -39,26 +37,28 @@
 ###  2. ChatGPT Mode,
         a. Normal mode, no arg needed to be passed.
 ```bash
-                    python3.10 main.py
+                    ./run_chatgpt.sh
 ```
+        (If encountering permission denied error, use `chmod +x ./run_dalle.sh` in current directory)
+        
         b. Speech mode, '--speak' or '--s' arg needed.
 ```bash
-                    python3.10 main.py --speak
+                    ./run_chatgpt.sh --speak
 ```         
             or
 ```bash
-                    python3.10 main.py --s
+                    ./run_chatgpt.sh --s
 ```
         c. Transcript Mode, '--transcript' or '--t' options.
 ```bash
-                    python3.10 main.py --transcript
+                    ./run_chatgpt.sh --transcript
 ```         
             or
 ```bash
-                    python3.10 main.py --t
+                    ./run_chatgpt.sh --t
 ```
             - Runs can have multiple options as well.
 ```bash
-                    python3.10 main.py --s --t
+                    ./run_chatgpt.sh --s --t
 ```
             - `Enter` when done. This will exit present terminal run.
